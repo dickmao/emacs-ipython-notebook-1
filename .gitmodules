@@ -28,12 +28,12 @@
 [submodule "lib/markdown-mode"]
 	path = lib/markdown-mode
 	url = git://jblevins.org/git/markdown-mode.git
-[submodule "lib/nxhtml"]
-	path = lib/nxhtml
-	url = git://github.com/emacsmirror/nxhtml.git
 [submodule "lib/ert"]
 	path = lib/ert
 	url = git://github.com/ohler/ert.git
 [submodule "lib/request"]
 	path = lib/request
 	url = git://github.com/tkf/emacs-request
+[submodule "lib/nxhtml"]
+	path = lib/nxhtml
+	url = git://github.com/jwiegley/nxhtml
