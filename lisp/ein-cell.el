@@ -178,7 +178,9 @@ See also: https://github.com/tkf/emacs-ipython-notebook/issues/94"
     :documentation "Place to hold data until it is rendered via `ewoc'.")
    (outputs :initarg :outputs :initform nil :type list)
    (events :initarg :events :type ein:events)
-   (cell-id :initarg :cell-id :initform (ein:utils-uuid) :type string))
+   (cell-id :initarg :cell-id :initform (ein:utils-uuid) :type string)
+   )
+  
   "Notebook cell base class")
 
 (defclass ein:codecell (ein:basecell)
@@ -792,7 +794,8 @@ If END is non-`nil', return the location of next element."
          (element (oref cell :element)))
     (plist-put element :output
                (append (plist-get element :output) (list ewoc-node)))
-    (ewoc-invalidate ewoc (ein:cell-element-get cell :footer))))
+    (ewoc-invalidate ewoc (ein:cell-element-get cell :footer))
+    ))
 
 (defmethod ein:cell-append-pyout ((cell ein:codecell) json)
   "Insert pyout type output in the buffer.
@@ -1002,7 +1005,7 @@ prettified text thus be used instead of HTML type."
   (let ((events (oref cell :events)))
     (ein:events-trigger events 'set_next_input.Worksheet
                         (list :cell cell :text text))
-    ; (ein:events-trigger events 'maybe_reset_undo.Worksheet cell)
+    (ein:events-trigger events 'maybe_reset_undo.Worksheet cell)
     ))
 
 
@@ -1030,8 +1033,7 @@ prettified text thus be used instead of HTML type."
        (plist-put json :evalue (plist-get content :evalue))
        (plist-put json :traceback (plist-get content :traceback))))
     (ein:cell-append-output cell json t)
-    ;; (oset cell :dirty t)
-    ; (ein:events-trigger (oref cell :events) 'maybe_reset_undo.Worksheet cell)
+    (ein:events-trigger (oref cell :events) 'maybe_reset_undo.Worksheet cell)
     ))
 
 
@@ -1056,7 +1058,7 @@ prettified text thus be used instead of HTML type."
                          (plist-get content :stdout)
                          (plist-get content :stderr)
                          (plist-get content :other))
-  ; (ein:events-trigger (oref cell :events) 'maybe_reset_undo.Worksheet cell)
+  (ein:events-trigger (oref cell :events) 'maybe_reset_undo.Worksheet cell)
   )
 
 
