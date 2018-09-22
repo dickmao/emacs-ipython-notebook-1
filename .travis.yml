@@ -4,19 +4,20 @@ addons:
     packages:
       - gnutls-bin
       - libssl-dev
+python:
+  - "2.7"
 before_install:
   - git submodule --quiet update --init
-  - sudo apt-get install -qq python-virtualenv
   - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh && source ./x.sh
   - evm install $EVM_EMACS --use --skip
   - evm list
   - cask install
 install:
-  - pip install tornado==$TORNADO
+  - pip install tornado
   - pip install jupyter==$JUPYTER
 env:
-  - EIN_TEST_TARGET=travis-ci-testein IPY_VERSION=0.13.2 EVM_EMACS=emacs-25.2-travis JUPYTER=1.0.0 TORNADO=4.0.0
-  - EIN_TEST_TARGET=travis-ci-testein IPY_VERSION=0.13.2 EVM_EMACS=emacs-26.1-travis JUPYTER=1.0.0 TORNADO=4.0.0
+  - EIN_TEST_TARGET=travis-ci-testein IPY_VERSION=0.13.2 EVM_EMACS=emacs-25.2-travis JUPYTER=1.0.0
+  - EIN_TEST_TARGET=travis-ci-testein IPY_VERSION=0.13.2 EVM_EMACS=emacs-26.1-travis JUPYTER=1.0.0
 matrix:
   allow_failures:
     # EMACS=emacs-snapshot
