@@ -12,11 +12,11 @@ before_install:
   - evm list
   - cask install
 install:
-  - pip install tornado
+  - pip install tornado==$TORNADO
   - pip install jupyter==$JUPYTER
 env:
-  - EIN_TEST_TARGET=travis-ci-testein IPY_VERSION=0.13.2 EVM_EMACS=emacs-25.2-travis JUPYTER=1.0.0
-  - EIN_TEST_TARGET=travis-ci-testein IPY_VERSION=0.13.2 EVM_EMACS=emacs-26.1-travis JUPYTER=1.0.0
+  - EIN_TEST_TARGET=travis-ci-testein IPY_VERSION=0.13.2 EVM_EMACS=emacs-25.2-travis JUPYTER=1.0.0 TORNADO=4.0.0
+  - EIN_TEST_TARGET=travis-ci-testein IPY_VERSION=0.13.2 EVM_EMACS=emacs-26.1-travis JUPYTER=1.0.0 TORNADO=4.0.0
 matrix:
   allow_failures:
     # EMACS=emacs-snapshot
