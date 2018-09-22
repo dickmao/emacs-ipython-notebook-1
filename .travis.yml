@@ -1,4 +1,4 @@
-language: emacs-lisp
+language: python
 addons:
   apt:
     packages:
@@ -11,6 +11,7 @@ before_install:
   - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh && source ./x.sh
   - evm install $EVM_EMACS --use --skip
   - evm list
+  - cask install
 install:
   - pip install tornado
   - pip install jupyter==$JUPYTER
