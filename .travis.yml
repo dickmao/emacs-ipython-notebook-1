@@ -1,26 +1,34 @@
-language: python
-addons:
-  apt:
-    packages:
-      - gnutls-bin
-      - libssl-dev
-python:
-  - "2.7"
-before_install:
-  - git submodule --quiet update --init
-  - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh && source ./x.sh
-  - evm install $EVM_EMACS --use --skip
-  - evm list
-  - cask install
-install:
-  - pip install tornado
-  - pip install jupyter==$JUPYTER
+sudo: false
+language: emacs-lisp
+
+cache:
+  directories:
+  - $HOME/.cask
+  - $HOME/.evm
+
 env:
-  - EIN_TEST_TARGET=travis-ci-testein IPY_VERSION=0.13.2 EVM_EMACS=emacs-25.2-travis JUPYTER=1.0.0
-  - EIN_TEST_TARGET=travis-ci-testein IPY_VERSION=0.13.2 EVM_EMACS=emacs-26.1-travis JUPYTER=1.0.0
+  global:
+    - EIN_TEST_TARGET=travis-ci-testein
+    - IPY_VERSION=0.13.2 
+    - JUPYTER_VERSION=1.0.0
+  matrix:
+    - EVM_EMACS=emacs-25.2-travis
+    - EVM_EMACS=emacs-26.1-travis
+
 matrix:
   allow_failures:
-    # EMACS=emacs-snapshot
-    - env: EIN_TEST_TARGET=travis-ci-testein IPY_VERSION=0.13.2 EMACS=emacs-snapshot
+    - env: EVM_EMACS=emacs-snapshot
+
+before_script:
+  - git submodule --quiet update --init
+  - sudo sh travis-ci/travis-gnutls.sh
+  - gnutls-cli -v
+  - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh && source ./x.sh
+  - evm install $EVM_EMACS --use --skip
+  - cask install
+  - pip install tornado jupyter==$JUPYTER_VERSION
+
 script:
-  make $EIN_TEST_TARGET IPY_VERSION=$IPY_VERSION
+  - emacs --version
+  - make $EIN_TEST_TARGET IPY_VERSION=$IPY_VERSION
+  - cask exec ert-runner
