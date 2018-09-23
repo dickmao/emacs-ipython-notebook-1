@@ -29,7 +29,7 @@ before_script:
   - sudo sh tools/travis-gnutls.sh
   - gnutls-cli -v
   - |
-    if [ ! -e $HOME/.cask/bin/cask ] || [ ! -e $HOME/.evm/bin/evm ] ; then
+    if ! cask --version > /dev/null || ! evm -h > /dev/null ; then
       rm -rf $HOME/.cask ;
       rm -rf $HOME/.evm ;
       curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh ;
