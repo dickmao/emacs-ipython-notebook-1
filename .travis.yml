@@ -4,10 +4,7 @@ language: emacs-lisp
 addons:
   apt:
     packages:
-    - autogen
-    - ca-certificates
-    - libgmp-dev
-    - xz-utils
+    - gnutls-bin
 
 cache:
   directories:
@@ -27,7 +24,6 @@ matrix:
     - env: EVM_EMACS=emacs-snapshot
 
 before_script:
-  - sh tools/install-gnutls.sh
   - gnutls-cli -v
   - sh tools/install-evm.sh
   - evm install $EVM_EMACS --use --skip
