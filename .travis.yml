@@ -8,13 +8,11 @@ addons:
 
 cache:
   directories:
-  - $HOME/.cask
-  - $HOME/.evm
   - $HOME/local
 
 env:
   global:
-    - PATH=$HOME/local/bin:$PATH
+    - PATH=$HOME/local/bin:$HOME/.cask/bin:$HOME/.evm/bin:$PATH
     - EIN_TEST_TARGET=travis-ci-testein
     - IPY_VERSION=0.13.2 
     - JUPYTER_VERSION=1.0.0
