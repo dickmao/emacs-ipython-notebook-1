@@ -24,7 +24,7 @@ matrix:
     - env: EVM_EMACS=emacs-snapshot
 
 before_script:
-  - sudo sh travis-ci/travis-gnutls.sh
+  - sudo sh tools/travis-gnutls.sh
   - gnutls-cli -v
   - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh && source ./x.sh
   - evm install $EVM_EMACS --use --skip
