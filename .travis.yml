@@ -15,7 +15,6 @@ env:
     - PATH=$HOME/local/bin:$HOME/.cask/bin:$HOME/.evm/bin:$PATH
     - EIN_TEST_TARGET=travis-ci-testein
     - IPY_VERSION=0.13.2 
-    - JUPYTER_VERSION=1.0.0
   matrix:
     - EVM_EMACS=emacs-25.2-travis
     - EVM_EMACS=emacs-26.1-travis
@@ -30,7 +29,6 @@ before_script:
   - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh && source ./x.sh
   - evm install $EVM_EMACS --use --skip
   - cask install
-  - pip install tornado jupyter==$JUPYTER_VERSION
 
 script:
   - emacs --version
