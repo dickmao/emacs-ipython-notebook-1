@@ -6,6 +6,12 @@ addons:
     packages:
     - autogen
 
+cache:
+  directories:
+  - $HOME/local
+  - $HOME/.evm
+  - $HOME/.cask
+
 env:
   global:
     - PATH=$HOME/local/bin:$HOME/.cask/bin:$HOME/.evm/bin:$PATH
@@ -22,7 +28,10 @@ matrix:
 before_script:
   - sudo sh tools/travis-gnutls.sh
   - gnutls-cli -v
-  - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh && source ./x.sh
+  - |
+    if [ ! -e $HOME/.cask/bin/cask ] || [ ! -e $HOME/.evm/bin/evm ] ; then
+      curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh && source ./x.sh
+    fi
   - evm install $EVM_EMACS --use --skip
   - cask install
 
