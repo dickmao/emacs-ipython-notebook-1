@@ -12,12 +12,10 @@ addons:
 cache:
   directories:
   - $HOME/local
-  - $HOME/.evm
-  - $HOME/.cask
 
 env:
   global:
-    - PATH=$HOME/local/bin:$HOME/.cask/bin:$HOME/.evm/bin:$PATH
+    - PATH=$HOME/local/bin:$HOME/local/evm/bin:$HOME/local/cask/bin:$PATH
     - EIN_TEST_TARGET=travis-ci-testein
     - IPY_VERSION=0.13.2 
   matrix:
@@ -29,15 +27,9 @@ matrix:
     - env: EVM_EMACS=emacs-snapshot
 
 before_script:
-  - sudo sh tools/travis-gnutls.sh
+  - sh tools/install-gnutls.sh
   - gnutls-cli -v
-  - |
-    if ! cask --version > /dev/null || ! evm -h > /dev/null ; then
-      rm -rf $HOME/.cask ;
-      rm -rf $HOME/.evm ;
-      curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh ;
-      source ./x.sh ;
-    fi
+  - sh tools/install-evm.sh
   - evm install $EVM_EMACS --use --skip
   - cask install
 
