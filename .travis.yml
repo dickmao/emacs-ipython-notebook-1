@@ -6,10 +6,6 @@ addons:
     packages:
     - autogen
 
-cache:
-  directories:
-  - $HOME/local
-
 env:
   global:
     - PATH=$HOME/local/bin:$HOME/.cask/bin:$HOME/.evm/bin:$PATH
