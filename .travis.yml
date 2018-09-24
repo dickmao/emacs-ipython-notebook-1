@@ -31,6 +31,4 @@ before_script:
   - cask install
 
 script:
-  - emacs --version
   - make $EIN_TEST_TARGET IPY_VERSION=$IPY_VERSION
-  - cask exec ert-runner
