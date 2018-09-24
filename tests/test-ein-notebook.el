@@ -955,19 +955,18 @@ defined."
       (call-interactively #'ein:worksheet-insert-cell-above)
       (call-interactively #'ein:worksheet-goto-next-input)
       (should (equal (ein:cell-get-text (ein:worksheet-get-current-cell)) text))
-      (if (eq ein:worksheet-enable-undo 'full)
+      (if ein:worksheet-enable-undo
           (undo)
         (should-error (undo)))
-      (when (eq ein:worksheet-enable-undo 'full)
-        ;; FIXME: Known bug. (this must succeed.)
-        (should-error (should (equal (buffer-string) "
+      (when ein:worksheet-enable-undo
+        (should (equal (buffer-string) "
 In [ ]:
 
 
 In [ ]:
 
 
-")))))))
+"))))))
 
 (defun eintest:notebook-undo-after-split ()
   (with-current-buffer (ein:testing-notebook-make-empty)
@@ -981,10 +980,10 @@ In [ ]:
       (undo-boundary)
       (should (equal (ein:cell-get-text (ein:worksheet-get-current-cell))
                      line-2))
-      (if (eq ein:worksheet-enable-undo 'full)
+      (if ein:worksheet-enable-undo
           (undo)
         (should-error (undo)))
-      (when (eq ein:worksheet-enable-undo 'full)
+      (when ein:worksheet-enable-undo
         (should (equal (buffer-string) "
 In [ ]:
 
@@ -1020,7 +1019,7 @@ second line
 
       (should (equal (ein:cell-get-text (ein:worksheet-get-current-cell))
                      (concat line-1 "\n" line-2)))
-      (if (not (eq ein:worksheet-enable-undo 'full))
+      (if (not ein:worksheet-enable-undo)
           (should-error (undo))
         (undo)
         (should (equal (buffer-string) "
@@ -1033,14 +1032,9 @@ In [ ]:
 In [ ]:
 
 
-")))
-      (when (eq ein:worksheet-enable-undo 'yes)
-        ;; FIXME: `undo' should work...
-        (should-error (undo-more 1)))
-      (when (eq ein:worksheet-enable-undo 'full)
-        (undo)
-        ;; FIXME: Known bug... What should the result be?
-        (should-error (should (equal (buffer-string) "
+"))
+        (undo-more 1)
+        (should (equal (buffer-string) "
 In [ ]:
 
 
@@ -1050,7 +1044,7 @@ In [ ]:
 In [ ]:
 
 
-")))))))
+"))))))
 
 (defun eintest:notebook-undo-after-execution-1-cell ()
   (with-current-buffer (ein:testing-notebook-make-empty)
@@ -1075,13 +1069,12 @@ In [ ]:
       (funcall check-output)
       ;; Undo
       (should (equal (ein:cell-get-text cell) text))
-      (if (eq ein:worksheet-enable-undo 'full)
+      (if ein:worksheet-enable-undo
           (undo)
         (should-error (undo)))
-      (when (eq ein:worksheet-enable-undo 'full)
+      (when ein:worksheet-enable-undo
         (should (equal (ein:cell-get-text cell) ""))
-        ;; FIXME: Known bug. (it must succeed.)
-        (should-error (funcall check-output))))))
+        (should (funcall check-output))))))
 
 (defun eintest:notebook-undo-after-execution-2-cells ()
   (with-current-buffer (ein:testing-notebook-make-empty)
@@ -1117,53 +1110,35 @@ In [ ]:
       ;; Undo
       (should (equal (ein:cell-get-text cell) text))
       (should (equal (ein:cell-get-text next-cell) next-text))
-      (if (eq ein:worksheet-enable-undo 'full)
+      (if ein:worksheet-enable-undo
           (undo)
         (should-error (undo)))
-      (when (eq ein:worksheet-enable-undo 'full)
+      (when ein:worksheet-enable-undo
         (should (equal (ein:cell-get-text cell) text))
-        ;; FIXME: Known bug. (these two must succeed.)
-        (should-error (should (equal (ein:cell-get-text next-cell) "")))
-        (should-error (funcall check-output))))))
+        (should (equal (ein:cell-get-text next-cell) ""))
+        (should (funcall check-output))))))
 
 (defmacro eintest:notebook-undo-make-tests (name)
-  "Define three tests ein:NANE/no, ein:NANE/yes and ein:NANE/full
-from a function named eintest:NAME where `no'/`yes'/`full' is the
+  "Define two tests ein:NANE/no, ein:NANE/yes
+from a function named eintest:NAME where `no'/`yes' is the
 value of `ein:worksheet-enable-undo'."
   (let ((func (intern (format "eintest:%s" name)))
         (test/no (intern (format "ein:%s/no" name)))
-        (test/yes (intern (format "ein:%s/yes" name)))
-        (test/full (intern (format "ein:%s/full" name))))
+        (test/yes (intern (format "ein:%s/yes" name))))
     `(progn
        (ert-deftest ,test/no ()
-         (let ((ein:worksheet-enable-undo 'no))
+         (let ((ein:worksheet-enable-undo nil))
            (,func)))
        (ert-deftest ,test/yes ()
-         (let ((ein:worksheet-enable-undo 'yes))
+         (let ((ein:worksheet-enable-undo t))
            (,func)))
-       (ert-deftest ,test/full ()
-         (let ((ein:worksheet-enable-undo 'full))
-           (,func))))))
+       )))
 
 (eintest:notebook-undo-make-tests notebook-undo-after-insert-above)
 (eintest:notebook-undo-make-tests notebook-undo-after-split)
 (eintest:notebook-undo-make-tests notebook-undo-after-merge)
 (eintest:notebook-undo-make-tests notebook-undo-after-execution-1-cell)
 (eintest:notebook-undo-make-tests notebook-undo-after-execution-2-cells)
-
-(ert-deftest ein:notebook-undo-via-events ()
-  (with-current-buffer (ein:testing-notebook-make-empty)
-    (call-interactively #'ein:worksheet-insert-cell-below)
-    (loop with events = (ein:$notebook-events ein:%notebook%)
-          for ein:worksheet-enable-undo in '(no yes full) do
-          (let ((buffer-undo-list '(dummy))
-                (cell (ein:worksheet-get-current-cell)))
-            (with-temp-buffer
-              (should-not (equal buffer-undo-list '(dummy)))
-              (ein:events-trigger events 'maybe_reset_undo.Worksheet cell))
-            (if (eq ein:worksheet-enable-undo 'yes)
-                (should (equal buffer-undo-list nil))
-              (should (equal buffer-undo-list '(dummy))))))))
 
 
 ;; Generic getter

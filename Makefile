@@ -2,7 +2,7 @@ EMACS ?= emacs
 IPYTHON = env/ipy.$(IPY_VERSION)/bin/ipython
 IPY_VERSION = 0.13.2
 TESTEIN = tools/testein.py
-TESTEIN_OPTS = "--no-unit-test"
+TESTEIN_OPTS = 
 PKG_INFO = \
 grep '^Version' \
 env/ipy.$(IPY_VERSION)/lib/python*/site-packages/*.egg-info/PKG-INFO \
